@@ -1,4 +1,4 @@
-import { computed } from 'vue-demi'
+import { computed } from 'vue'
 import { useMounted } from '../useMounted'
 
 export function useSupported(callback: () => unknown) {
@@ -11,3 +11,5 @@ export function useSupported(callback: () => unknown) {
     return Boolean(callback())
   })
 }
+
+export type UseSupportedReturn = ReturnType<typeof useSupported>

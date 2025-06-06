@@ -1,7 +1,5 @@
-import type { ToRefs } from 'vue-demi'
-import type { MaybeRef, MaybeRefOrGetter } from '../utils'
-import { toRefs as _toRefs, customRef, isRef } from 'vue-demi'
-import { toValue } from '../toValue'
+import type { MaybeRef, MaybeRefOrGetter, ToRefs } from 'vue'
+import { toRefs as _toRefs, customRef, isRef, toValue } from 'vue'
 
 export interface ToRefsOptions {
   /**
@@ -17,6 +15,7 @@ export interface ToRefsOptions {
  *
  * @see https://vueuse.org/toRefs
  * @param objectRef A ref or normal object or array.
+ * @param options Options
  */
 export function toRefs<T extends object>(
   objectRef: MaybeRef<T>,

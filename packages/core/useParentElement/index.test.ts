@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, isVue2, nextTick, ref } from 'vue-demi'
-import { useParentElement } from '.'
+import { ref as deepRef, defineComponent, h, nextTick } from 'vue'
 import { mount } from '../../.test'
+import { useParentElement } from './index'
 
-describe.skipIf(isVue2)('useParentElement', () => {
+describe('useParentElement', () => {
   it('should be defined', () => {
     expect(useParentElement).toBeDefined()
   })
@@ -30,7 +30,7 @@ describe.skipIf(isVue2)('useParentElement', () => {
   })
 
   it('should accept ref', async () => {
-    const liEl = ref()
+    const liEl = deepRef()
     const parentElement = useParentElement(liEl)
 
     mount(defineComponent({

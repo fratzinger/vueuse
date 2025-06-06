@@ -1,7 +1,5 @@
-import type { ComputedRef } from 'vue-demi'
-import type { MaybeRefOrGetter } from '../utils'
-import { computed } from 'vue-demi'
-import { toValue } from '../toValue'
+import type { ComputedRef, MaybeRefOrGetter } from 'vue'
+import { computed, toValue } from 'vue'
 
 function uniq<T>(array: T[]) {
   return Array.from(new Set(array))
@@ -18,6 +16,8 @@ function uniqueElementsBy<T>(
   }, [])
 }
 
+export type UseArrayUniqueReturn<T = any> = ComputedRef<T[]>
+
 /**
  * reactive unique array
  * @see https://vueuse.org/useArrayUnique
@@ -28,7 +28,7 @@ function uniqueElementsBy<T>(
 export function useArrayUnique<T>(
   list: MaybeRefOrGetter<MaybeRefOrGetter<T>[]>,
   compareFn?: (a: T, b: T, array: T[]) => boolean,
-): ComputedRef<T[]> {
+): UseArrayUniqueReturn<T> {
   return computed<T[]>(() => {
     const resolvedList = toValue(list).map(element => toValue(element))
     return compareFn ? uniqueElementsBy(resolvedList, compareFn) : uniq(resolvedList)

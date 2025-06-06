@@ -1,14 +1,16 @@
-import type { EffectScope } from 'vue-demi'
+import type { EffectScope } from 'vue'
 import type { AnyFn } from '../utils'
-import { effectScope } from 'vue-demi'
+import { effectScope } from 'vue'
 import { tryOnScopeDispose } from '../tryOnScopeDispose'
+
+export type SharedComposableReturn<T extends AnyFn = AnyFn> = T
 
 /**
  * Make a composable function usable with multiple Vue instances.
  *
  * @see https://vueuse.org/createSharedComposable
  */
-export function createSharedComposable<Fn extends AnyFn>(composable: Fn): Fn {
+export function createSharedComposable<Fn extends AnyFn>(composable: Fn): SharedComposableReturn<Fn> {
   let subscribers = 0
   let state: ReturnType<Fn> | undefined
   let scope: EffectScope | undefined

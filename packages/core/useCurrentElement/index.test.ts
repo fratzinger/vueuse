@@ -1,16 +1,15 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, isVue2, shallowRef } from 'vue-demi'
-import { useCurrentElement } from '.'
+import { defineComponent, shallowRef } from 'vue'
+import { useCurrentElement } from './index'
 
-// Manual triggering only works for Vue 3 - https://vueuse.org/shared/computedWithControl/#manual-triggering
-describe.skipIf(isVue2)('useCurrentElement', () => {
+describe('useCurrentElement', () => {
   it('should be defined', () => {
     expect(useCurrentElement).toBeDefined()
   })
 
   it('should return the root element from the current component', () => {
-    const wrapper = mount({
+    const wrapper = mount(defineComponent({
       template: '<p ref="el">test</p>',
       setup() {
         const el = shallowRef<HTMLElement>()
@@ -18,7 +17,7 @@ describe.skipIf(isVue2)('useCurrentElement', () => {
 
         return { el, currentElement }
       },
-    })
+    }))
     const vm = wrapper.vm
 
     expect(vm.currentElement).toBe(vm.el)
@@ -34,7 +33,7 @@ describe.skipIf(isVue2)('useCurrentElement', () => {
       },
       template: '<div ref="rootEl">Hello world</div>',
     })
-    const wrapper = mount({
+    const wrapper = mount(defineComponent({
       components: {
         TestVueComponent,
       },
@@ -48,7 +47,7 @@ describe.skipIf(isVue2)('useCurrentElement', () => {
 
         return { el, currentElementEl }
       },
-    })
+    }))
     const vm = wrapper.vm
 
     expect(vm.currentElementEl).toBe((vm.el as typeof TestVueComponent).rootEl)

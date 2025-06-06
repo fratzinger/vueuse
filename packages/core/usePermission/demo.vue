@@ -1,7 +1,19 @@
 <script setup lang="ts">
-import { usePermission } from '@vueuse/core'
-import YAML from 'js-yaml'
+import { reactify, usePermission } from '@vueuse/core'
 import { computed, reactive } from 'vue'
+import YAML from 'yaml'
+
+const stringify = reactify(
+  (input: any) => YAML.stringify(input, (k, v) => {
+    if (typeof v === 'function') {
+      return undefined
+    }
+    return v
+  }, {
+    singleQuote: true,
+    flowCollectionPadding: false,
+  }),
+)
 
 const accelerometer = usePermission('accelerometer')
 const accessibilityEvents = usePermission('accessibility-events')
@@ -10,6 +22,7 @@ const backgroundSync = usePermission('background-sync')
 const camera = usePermission('camera')
 const clipboardRead = usePermission('clipboard-read')
 const clipboardWrite = usePermission('clipboard-write')
+const geolocation = usePermission('geolocation')
 const gyroscope = usePermission('gyroscope')
 const magnetometer = usePermission('magnetometer')
 const microphone = usePermission('microphone')
@@ -20,7 +33,7 @@ const push = usePermission('push')
 const speaker = usePermission('speaker')
 const localFonts = usePermission('local-fonts')
 
-const code = computed(() => YAML.dump(reactive({
+const code = computed(() => stringify(reactive({
   accelerometer,
   accessibilityEvents,
   ambientLightSensor,
@@ -28,6 +41,7 @@ const code = computed(() => YAML.dump(reactive({
   camera,
   clipboardRead,
   clipboardWrite,
+  geolocation,
   gyroscope,
   magnetometer,
   microphone,

@@ -1,4 +1,15 @@
-import type { ComputedRef, Ref, ShallowRef, WatchOptions, WatchSource, WritableComputedRef } from 'vue-demi'
+import type { ComputedRef, MaybeRef, MaybeRefOrGetter, Ref, ShallowRef, WatchOptions, WatchSource } from 'vue'
+
+export type {
+  /**
+   * @deprecated use `MaybeRef` from `vue` instead
+   */
+  MaybeRef,
+  /**
+   * @deprecated use `MaybeRefOrGetter` from `vue` instead
+   */
+  MaybeRefOrGetter,
+}
 
 /**
  * Void function
@@ -17,24 +28,6 @@ export type RemovableRef<T> = Omit<Ref<T>, 'value'> & {
   get value(): T
   set value(value: T | null | undefined)
 }
-
-// Vue 2 does not expose `MaybeRef` and `MaybeRefOrGetter` types,
-// so we need to maintain these types within vueuse.
-// Ensure they are kept in sync with Vue 3 updates.
-
-/**
- * Maybe it's a ref, or a plain value.
- */
-export type MaybeRef<T = any> =
-  | T
-  | Ref<T>
-  | ShallowRef<T>
-  | WritableComputedRef<T>
-
-/**
- * Maybe it's a ref, or a plain value, or a getter function.
- */
-export type MaybeRefOrGetter<T = any> = MaybeRef<T> | ComputedRef<T> | (() => T)
 
 /**
  * Maybe it's a computed ref, or a readonly value, or a getter function
@@ -88,7 +81,7 @@ export interface Pausable {
   /**
    * A ref indicate whether a pausable instance is active
    */
-  isActive: Readonly<Ref<boolean>>
+  readonly isActive: Readonly<ShallowRef<boolean>>
 
   /**
    * Temporary pause the effect from executing
@@ -105,7 +98,7 @@ export interface Stoppable<StartFnArgs extends any[] = any[]> {
   /**
    * A ref indicate whether a stoppable instance is executing
    */
-  isPending: Readonly<Ref<boolean>>
+  readonly isPending: Readonly<Ref<boolean>>
 
   /**
    * Stop the effect from executing

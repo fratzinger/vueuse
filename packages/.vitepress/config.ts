@@ -4,6 +4,7 @@ import { withPwa } from '@vite-pwa/vitepress'
 import { defineConfig } from 'vitepress'
 import { currentVersion, versions } from '../../meta/versions'
 import { addonCategoryNames, categoryNames, coreCategoryNames, metadata } from '../metadata/metadata'
+import { PWAVirtual } from './plugins/pwa-virtual'
 import { transformHead } from './transformHead'
 import viteConfig from './vite.config'
 
@@ -42,6 +43,11 @@ const Links = [
 const Learn = [
   { text: 'Premium Video Course', link: 'https://vueschool.io/courses/vueuse-for-everyone?friend=vueuse' },
   { text: 'Official Vue Certification', link: 'https://certification.vuejs.org/?utm_source=vueuse&utm_medium=website&utm_campaign=affiliate&utm_content=guide&banner_type=text&friend=VUEUSE' },
+]
+
+const Resources = [
+  { text: 'Team & Contributors', link: '/team' },
+  { text: 'Learn', items: Learn },
 ]
 
 const DefaultSideBar = [
@@ -91,7 +97,7 @@ export default withPwa(defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/vueuse/vueuse' },
       { icon: 'discord', link: 'https://chat.antfu.me' },
-      { icon: 'twitter', link: 'https://twitter.com/vueuse' },
+      { icon: 'bluesky', link: 'https://bsky.app/profile/vueuse.org' },
     ],
 
     nav: [
@@ -99,7 +105,6 @@ export default withPwa(defineConfig({
         text: 'Guide',
         items: [
           { text: 'Guide', items: Guide },
-          { text: 'Learn', items: Learn },
           { text: 'Links', items: Links },
         ],
       },
@@ -118,8 +123,8 @@ export default withPwa(defineConfig({
         ],
       },
       {
-        text: 'Add-ons',
-        link: '/add-ons',
+        text: 'Resources',
+        items: Resources,
       },
       {
         text: 'Playground',
@@ -244,6 +249,14 @@ export default withPwa(defineConfig({
     injectManifest: {
       globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,woff2}', 'hashmap.json'],
       globIgnores: ['og-*.png'],
+      // vue chunk ~5.4MB: won't be precached, and won't work when offline
+      maximumFileSizeToCacheInBytes: 6_000_000,
+      // for local build + preview
+      // enableWorkboxModulesLogs: true,
+      // minify: false,
+      buildPlugins: {
+        vite: [PWAVirtual()],
+      },
     },
   },
 

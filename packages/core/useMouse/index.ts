@@ -1,7 +1,8 @@
-import type { ConfigurableEventFilter, MaybeRefOrGetter } from '@vueuse/shared'
+import type { ConfigurableEventFilter } from '@vueuse/shared'
+import type { MaybeRefOrGetter } from 'vue'
 import type { ConfigurableWindow } from '../_configurable'
 import type { Position } from '../types'
-import { ref } from 'vue-demi'
+import { shallowRef } from 'vue'
 import { defaultWindow } from '../_configurable'
 import { useEventListener } from '../useEventListener'
 
@@ -55,9 +56,9 @@ const UseMouseBuiltinExtractors: Record<UseMouseCoordType, UseMouseEventExtracto
   page: event => [event.pageX, event.pageY],
   client: event => [event.clientX, event.clientY],
   screen: event => [event.screenX, event.screenY],
-  movement: event => (event instanceof Touch
-    ? null
-    : [event.movementX, event.movementY]
+  movement: event => (event instanceof MouseEvent
+    ? [event.movementX, event.movementY]
+    : null
   ),
 } as const
 
@@ -80,10 +81,12 @@ export function useMouse(options: UseMouseOptions = {}) {
   } = options
 
   let _prevMouseEvent: MouseEvent | null = null
+  let _prevScrollX = 0
+  let _prevScrollY = 0
 
-  const x = ref(initialValue.x)
-  const y = ref(initialValue.y)
-  const sourceType = ref<UseMouseSourceType>(null)
+  const x = shallowRef(initialValue.x)
+  const y = shallowRef(initialValue.y)
+  const sourceType = shallowRef<UseMouseSourceType>(null)
 
   const extractor = typeof type === 'function'
     ? type
@@ -96,6 +99,11 @@ export function useMouse(options: UseMouseOptions = {}) {
     if (result) {
       [x.value, y.value] = result
       sourceType.value = 'mouse'
+    }
+
+    if (window) {
+      _prevScrollX = window.scrollX
+      _prevScrollY = window.scrollY
     }
   }
 
@@ -115,8 +123,8 @@ export function useMouse(options: UseMouseOptions = {}) {
     const pos = extractor(_prevMouseEvent)
 
     if (_prevMouseEvent instanceof MouseEvent && pos) {
-      x.value = pos[0] + window.scrollX
-      y.value = pos[1] + window.scrollY
+      x.value = pos[0] + window.scrollX - _prevScrollX
+      y.value = pos[1] + window.scrollY - _prevScrollY
     }
   }
 
@@ -146,7 +154,7 @@ export function useMouse(options: UseMouseOptions = {}) {
         useEventListener(target, 'touchend', reset, listenerOptions)
     }
     if (scroll && type === 'page')
-      useEventListener(window, 'scroll', scrollHandlerWrapper, { passive: true })
+      useEventListener(window, 'scroll', scrollHandlerWrapper, listenerOptions)
   }
 
   return {

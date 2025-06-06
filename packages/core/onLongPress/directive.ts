@@ -1,8 +1,7 @@
-import type { ObjectDirective } from 'vue-demi'
-import type { OnLongPressOptions } from '.'
+import type { ObjectDirective } from 'vue'
+import type { OnLongPressOptions } from './index'
 
-import { directiveHooks } from '@vueuse/shared'
-import { onLongPress } from '.'
+import { onLongPress } from './index'
 
 type BindingValueFunction = (evt: PointerEvent) => void
 
@@ -15,7 +14,7 @@ export const vOnLongPress: ObjectDirective<
   HTMLElement,
   BindingValueFunction | BindingValueArray
 > = {
-  [directiveHooks.mounted](el, binding) {
+  mounted(el, binding) {
     if (typeof binding.value === 'function')
       onLongPress(el, binding.value, { modifiers: binding.modifiers })
     else

@@ -1,6 +1,6 @@
 import type { Fn } from '../utils'
 // eslint-disable-next-line no-restricted-imports
-import { nextTick, onMounted } from 'vue-demi'
+import { nextTick, onMounted } from 'vue'
 import { getLifeCycleTarget } from '../utils'
 
 /**
@@ -11,7 +11,7 @@ import { getLifeCycleTarget } from '../utils'
  * @param target
  */
 export function tryOnMounted(fn: Fn, sync = true, target?: any) {
-  const instance = getLifeCycleTarget()
+  const instance = getLifeCycleTarget(target)
   if (instance)
     onMounted(fn, target)
   else if (sync)

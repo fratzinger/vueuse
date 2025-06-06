@@ -1,13 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
-import { isRef, isVue2, watch, watchEffect } from 'vue-demi'
-import { controlledRef, refWithControl } from '.'
+import { isRef, watch, watchEffect } from 'vue'
+import { controlledRef, refWithControl } from './index'
 
 describe('controlledRef', () => {
-  if (isVue2) {
-    it('skipped', () => {})
-    return
-  }
-
   it('should export module', () => {
     expect(refWithControl).toBeDefined()
     expect(controlledRef).toBeDefined()

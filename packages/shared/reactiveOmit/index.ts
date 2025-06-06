@@ -1,17 +1,21 @@
-import { toRefs } from 'vue-demi'
+import { toRefs, toValue } from 'vue'
 import { reactiveComputed } from '../reactiveComputed'
-import { toValue } from '../toValue'
+
+export type ReactiveOmitReturn<T extends object, K extends keyof T | undefined = undefined> =
+  [K] extends [undefined]
+    ? Partial<T>
+    : Omit<T, Extract<K, keyof T>>
 
 export type ReactiveOmitPredicate<T> = (value: T[keyof T], key: keyof T) => boolean
 
 export function reactiveOmit<T extends object, K extends keyof T>(
   obj: T,
   ...keys: (K | K[])[]
-): Omit<T, K>
+): ReactiveOmitReturn<T, K>
 export function reactiveOmit<T extends object>(
   obj: T,
   predicate: ReactiveOmitPredicate<T>,
-): Partial<T>
+): ReactiveOmitReturn<T>
 /**
  * Reactively omit fields from a reactive object
  *
@@ -20,7 +24,7 @@ export function reactiveOmit<T extends object>(
 export function reactiveOmit<T extends object, K extends keyof T>(
   obj: T,
   ...keys: (K | K[])[]
-): Omit<T, K> {
+): ReactiveOmitReturn<T, K> {
   const flatKeys = keys.flat() as K[]
   const predicate = flatKeys[0] as unknown as ReactiveOmitPredicate<T>
   return reactiveComputed<any>(() =>

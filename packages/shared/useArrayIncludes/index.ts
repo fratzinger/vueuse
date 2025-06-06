@@ -1,7 +1,5 @@
-import type { ComputedRef } from 'vue-demi'
-import type { MaybeRefOrGetter } from '../utils'
-import { computed } from 'vue-demi'
-import { toValue } from '../toValue'
+import type { ComputedRef, MaybeRefOrGetter } from 'vue'
+import { computed, toValue } from 'vue'
 import { containsProp, isObject } from '../utils'
 
 export type UseArrayIncludesComparatorFn<T, V> = ((element: T, value: V, index: number, array: MaybeRefOrGetter<T>[]) => boolean)
@@ -15,6 +13,8 @@ export interface UseArrayIncludesOptions<T, V> {
   comparator?: UseArrayIncludesComparatorFn<T, V> | keyof T
 }
 
+export type UseArrayIncludesReturn = ComputedRef<boolean>
+
 /**
  * Reactive `Array.includes`
  *
@@ -26,20 +26,20 @@ export function useArrayIncludes<T, V = any>(
   list: MaybeRefOrGetter<MaybeRefOrGetter<T>[]>,
   value: MaybeRefOrGetter<V>,
   comparator?: UseArrayIncludesComparatorFn<T, V>,
-): ComputedRef<boolean>
+): UseArrayIncludesReturn
 export function useArrayIncludes<T, V = any>(
   list: MaybeRefOrGetter<MaybeRefOrGetter<T>[]>,
   value: MaybeRefOrGetter<V>,
   comparator?: keyof T,
-): ComputedRef<boolean>
+): UseArrayIncludesReturn
 export function useArrayIncludes<T, V = any>(
   list: MaybeRefOrGetter<MaybeRefOrGetter<T>[]>,
   value: MaybeRefOrGetter<V>,
   options?: UseArrayIncludesOptions<T, V>,
-): ComputedRef<boolean>
+): UseArrayIncludesReturn
 export function useArrayIncludes<T, V = any>(
   ...args: any[]
-): ComputedRef<boolean> {
+): UseArrayIncludesReturn {
   const list: MaybeRefOrGetter<MaybeRefOrGetter<T>[]> = args[0]
   const value: MaybeRefOrGetter<V> = args[1]
 

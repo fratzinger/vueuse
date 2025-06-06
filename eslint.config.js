@@ -1,10 +1,12 @@
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import antfu from '@antfu/eslint-config'
+import { createSimplePlugin } from 'eslint-factory'
+import { createAutoInsert } from 'eslint-plugin-unimport'
 
 const dir = fileURLToPath(new URL('.', import.meta.url))
 const restricted = [
-  'vue',
+  'vue-demi',
   '@vue/reactivity',
   '@vue/runtime-core',
   '@vue/runtime-dom',
@@ -14,7 +16,7 @@ const restricted = [
   resolve(dir, 'packages/core/index.ts'),
   resolve(dir, 'packages/shared/index.ts'),
   {
-    name: 'vue-demi',
+    name: 'vue',
     importNames: ['onMounted', 'onUnmounted', 'unref', 'toRef'],
   },
 ]
@@ -22,13 +24,12 @@ const restricted = [
 export default antfu(
   {
     formatters: true,
+    pnpm: true,
     ignores: [
       'patches',
       'playgrounds',
       '**/types',
       '**/cache',
-      '**/dist',
-      '**/.temp',
       '**/*.svg',
     ],
   },
@@ -85,6 +86,14 @@ export default antfu(
   },
   {
     files: [
+      'packages/*/index.ts',
+    ],
+    rules: {
+      'perfectionist/sort-exports': 'off',
+    },
+  },
+  {
+    files: [
       '**/*.md',
       '**/*.md/*.[jt]s',
       '**/*.md/*.vue',
@@ -116,4 +125,33 @@ export default antfu(
       'no-restricted-imports': 'off',
     },
   },
+  createAutoInsert({
+    imports: [
+      {
+        from: 'vue',
+        name: 'shallowRef',
+      },
+      {
+        from: 'vue',
+        name: 'ref',
+        as: 'deepRef',
+      },
+    ],
+  }),
+  createSimplePlugin({
+    name: 'no-ref',
+    exclude: ['**/*.md', '**/*.md/**'],
+    create(context) {
+      return {
+        CallExpression(node) {
+          if (node.callee.type === 'Identifier' && node.callee.name === 'ref') {
+            context.report({
+              node,
+              message: 'Usage of ref() is restricted. Use shallowRef() or deepRef() instead.',
+            })
+          }
+        },
+      }
+    },
+  }),
 )

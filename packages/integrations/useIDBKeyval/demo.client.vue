@@ -1,6 +1,19 @@
 <script setup lang="ts">
-import { stringify } from '@vueuse/docs-utils'
-import { useIDBKeyval } from '.'
+import { useIDBKeyval } from '@vueuse/integrations'
+import { reactify } from '@vueuse/shared'
+import YAML from 'yaml'
+
+const stringify = reactify(
+  (input: any) => YAML.stringify(input, (k, v) => {
+    if (typeof v === 'function') {
+      return undefined
+    }
+    return v
+  }, {
+    singleQuote: true,
+    flowCollectionPadding: false,
+  }),
+)
 
 const KEY = 'vue-use-idb-keyval'
 
@@ -10,13 +23,13 @@ const stateObject = useIDBKeyval(`${KEY}-object`, {
   size: 'Medium',
   count: 0,
 })
-const textObject = stringify(stateObject)
+const textObject = stringify(stateObject.data)
 
 const stateString = useIDBKeyval(`${KEY}-string`, 'foobar')
 const textString = stateString
 
 const stateArray = useIDBKeyval(`${KEY}-array`, ['foo', 'bar', 'baz'])
-const textArray = stringify(stateArray)
+const textArray = stringify(stateArray.data)
 </script>
 
 <template>

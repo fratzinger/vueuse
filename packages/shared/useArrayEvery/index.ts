@@ -1,7 +1,7 @@
-import type { ComputedRef } from 'vue-demi'
-import type { MaybeRefOrGetter } from '../utils'
-import { computed } from 'vue-demi'
-import { toValue } from '../toValue'
+import type { ComputedRef, MaybeRefOrGetter } from 'vue'
+import { computed, toValue } from 'vue'
+
+export type UseArrayEveryReturn = ComputedRef<boolean>
 
 /**
  * Reactive `Array.every`
@@ -15,6 +15,6 @@ import { toValue } from '../toValue'
 export function useArrayEvery<T>(
   list: MaybeRefOrGetter<MaybeRefOrGetter<T>[]>,
   fn: (element: T, index: number, array: MaybeRefOrGetter<T>[]) => unknown,
-): ComputedRef<boolean> {
+): UseArrayEveryReturn {
   return computed(() => toValue(list).every((element, index, array) => fn(toValue(element), index, array)))
 }

@@ -1,7 +1,7 @@
-import type { ComputedRef } from 'vue-demi'
-import type { MaybeRefOrGetter } from '../utils'
-import { computed } from 'vue-demi'
-import { toValue } from '../toValue'
+import type { ComputedRef, MaybeRefOrGetter } from 'vue'
+import { computed, toValue } from 'vue'
+
+export type UseArrayFindReturn<T = any> = ComputedRef<T | undefined>
 
 /**
  * Reactive `Array.find`
@@ -15,7 +15,7 @@ import { toValue } from '../toValue'
 export function useArrayFind<T>(
   list: MaybeRefOrGetter<MaybeRefOrGetter<T>[]>,
   fn: (element: T, index: number, array: MaybeRefOrGetter<T>[]) => boolean,
-): ComputedRef<T | undefined> {
+): UseArrayFindReturn<T> {
   return computed(() =>
     toValue<T | undefined>(
       toValue(list)

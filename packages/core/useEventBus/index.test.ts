@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { nextTick } from 'vue-demi'
-import { useEventBus } from '.'
+import { nextTick } from 'vue'
 import { useSetup } from '../../.test'
 import { useCounter } from '../../shared/useCounter'
+import { useEventBus } from './index'
 import { events } from './internal'
 
 describe('useEventBus', () => {
